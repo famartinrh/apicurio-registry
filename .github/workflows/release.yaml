@@ -51,11 +51,11 @@ jobs:
       - name: Update Release Version ${{steps.metadata.outputs.release-version}}
         run: mvn versions:set -DnewVersion=${{steps.metadata.outputs.release-version}} -DgenerateBackupPoms=false -DprocessAllModules=true
       - name: Build All Variants
-        run: mvn clean install -Pprod -Pjpa -Pinfinispan -Pkafka -Pstreams -DskipTests
+        run: mvn clean install -Pprod -DskipTests
       - name: Verify (Standard)
-        run: mvn test package -Pprod -Pjpa
+        run: mvn test package -Pprod -pl storage/jpa
       - name: Run QE Tests
-        run: mvn verify -Pall -pl tests -Dmaven.javadoc.skip=true
+        run: mvn verify -pl tests -Dmaven.javadoc.skip=true -DtrimStackTrace=false -Pprod -Dskip-jpa
       - name: Commit Release Version Change
         run: |
           git add .
