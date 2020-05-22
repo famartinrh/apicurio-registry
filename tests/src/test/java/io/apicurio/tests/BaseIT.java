@@ -23,13 +23,14 @@ import io.apicurio.registry.types.ArtifactType;
 import io.apicurio.registry.utils.ConcurrentUtil;
 import io.apicurio.registry.utils.tests.TestUtils;
 import io.apicurio.tests.interfaces.TestSeparator;
-import io.restassured.RestAssured;
-import io.restassured.parsing.Parser;
+import io.apicurio.tests.utils.RegistryUtils;
+
 import org.apache.avro.Schema;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +53,14 @@ public abstract class BaseIT implements TestSeparator, Constants {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseIT.class);
     protected static KafkaFacade kafkaCluster = new KafkaFacade();
-    private static RegistryFacade registry = new RegistryFacade();
+    private static RegistryFacade registry = RegistryFacade.getInstance();
+
+    protected final InputStream resourceAsStream(String resourceName) {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
+    }
 
     protected final String resourceToString(String resourceName) {
-        try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName)) {
+        try (InputStream stream = resourceAsStream(resourceName)) {
             Assertions.assertNotNull(stream, "Resource not found: " + resourceName);
             return new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
@@ -63,40 +68,30 @@ public abstract class BaseIT implements TestSeparator, Constants {
         }
     }
 
-    @BeforeAll
-    static void beforeAll(TestInfo info) throws Exception {
-        if (!TestUtils.isExternalRegistry()) {
-            registry.start();
-        } else {
-            LOGGER.info("Going to use already running registries on {}", TestUtils.getRegistryApiUrl());
-        }
-
-        try {
-            TestUtils.waitFor("Cannot connect to registries on " + TestUtils.getRegistryApiUrl() + " in timeout!",
-                    Constants.POLL_INTERVAL, Constants.TIMEOUT_FOR_REGISTRY_START_UP, TestUtils::isReachable);
-
-            TestUtils.waitFor("Registry reports is ready",
-                    Constants.POLL_INTERVAL, Constants.TIMEOUT_FOR_REGISTRY_READY, () -> TestUtils.isReady(false), () -> TestUtils.isReady(true));
-
-        } catch (TimeoutException e) {
-            stopRegistryAndCollectLogs(info);
-            throw e;
-        }
-
-        RestAssured.baseURI = TestUtils.getRegistryApiUrl();
-        LOGGER.info("Registry app is running on {}", RestAssured.baseURI);
-        RestAssured.defaultParser = Parser.JSON;
-    }
-
-    @AfterAll
-    static void afterAll(TestInfo info) throws Exception {
-        if (!TestUtils.isExternalRegistry()) {
-            stopRegistryAndCollectLogs(info);
+    @BeforeEach
+    void startRegistryIfNeeded(TestInfo info) throws Exception {
+        if (!TestUtils.isExternalRegistry() && !registry.isRunning()) {
+            LOGGER.info("Starting registry");
+            try {
+                registry.start();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+            try {
+                RegistryUtils.waitForRegistry();
+            } catch (TimeoutException e) {
+                registry.stopAndCollectLogs(info);
+                throw e;
+            }
         }
     }
 
-    private static void stopRegistryAndCollectLogs(TestInfo info) throws Exception {
-        registry.stopAndCollectLogs(info);
+    @AfterEach
+    void stopRegistryAfterFailedTest(TestInfo info, ExtensionContext ctx) throws Exception {
+        if (!TestUtils.isExternalRegistry() && ctx.getExecutionException().isPresent()) {
+            LOGGER.info("Test failed");
+            registry.stopAndCollectLogs(info);
+        }
     }
 
     protected Map<String, String> createMultipleArtifacts(RegistryService apicurioService, int count) throws Exception {

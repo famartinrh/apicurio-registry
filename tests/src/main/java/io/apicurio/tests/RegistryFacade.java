@@ -64,12 +64,33 @@ public class RegistryFacade {
 
     private LinkedList<RegistryTestProcess> processes = new LinkedList<>();
 
+    private static RegistryFacade instance;
+
+    public static RegistryFacade getInstance() {
+        if (instance == null) {
+            instance = new RegistryFacade();
+        }
+        return instance;
+    }
+
+    private RegistryFacade() {
+        //hidden constructor, singleton class
+    }
+
+    public boolean isRunning() {
+        return !processes.isEmpty();
+    }
+
     /**
      * Method for start registries from jar file. New process is created.
      *
      * @throws Exception if registry depoyment fails
      */
     public void start() throws Exception {
+        if (!processes.isEmpty()) {
+            throw new IllegalStateException("Registry is already running");
+        }
+
         if (REGISTRY_STORAGE == null) {
             throw new IllegalStateException("REGISTRY_STORAGE env var is mandatory");
         }
@@ -83,8 +104,6 @@ public class RegistryFacade {
         Map<String, String> appEnv = new HashMap<>();
         switch (REGISTRY_STORAGE) {
             case inmemory:
-                path = String.format("../app/target/apicurio-registry-app-%s-runner.jar", PROJECT_VERSION);
-                break;
             case infinispan:
                 break;
             case kafka:
@@ -326,15 +345,22 @@ public class RegistryFacade {
         return path;
     }
 
+    public void stop() throws IOException {
+        stopAndCollectLogs(null);
+    }
+
     public void stopAndCollectLogs(TestInfo testInfo) throws IOException {
+        LOGGER.info("Stopping registry");
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         String currentDate = simpleDateFormat.format(Calendar.getInstance().getTime());
-        Path logsPath = Paths.get("target/logs/", REGISTRY_STORAGE.name(), testInfo.getTestClass().map(Class::getName).orElse(""),
-                testInfo.getDisplayName());
-        Files.createDirectories(logsPath);
+        if (testInfo != null) {
+            Path logsPath = getLogsPath(testInfo);
+            Files.createDirectories(logsPath);
+        }
 
         processes.descendingIterator().forEachRemaining(p -> {
+            //registry process is not a container and have to be stopped before being able to read log output
             if (p.getName().equals("registry")) {
                 try {
                     p.close();
@@ -343,10 +369,12 @@ public class RegistryFacade {
                     LOGGER.error("error stopping registry", e);
                 }
             }
-            TestUtils.writeFile(logsPath.resolve(currentDate + "-" + p.getName() + "-" + "stdout.log"), p.getStdOut());
-            String stdErr = p.getStdErr();
-            if (stdErr != null && !stdErr.isEmpty()) {
-                TestUtils.writeFile(logsPath.resolve(currentDate + "-" + p.getName() + "-" + "stderr.log"), stdErr);
+            if (testInfo != null) {
+                TestUtils.writeFile(getLogsPath(testInfo).resolve(currentDate + "-" + p.getName() + "-" + "stdout.log"), p.getStdOut());
+                String stdErr = p.getStdErr();
+                if (stdErr != null && !stdErr.isEmpty()) {
+                    TestUtils.writeFile(getLogsPath(testInfo).resolve(currentDate + "-" + p.getName() + "-" + "stderr.log"), stdErr);
+                }
             }
             if (!p.getName().equals("registry")) {
                 try {
@@ -356,5 +384,12 @@ public class RegistryFacade {
                 }
             }
         });
+        processes.clear();
     }
+
+    private Path getLogsPath(TestInfo testInfo) {
+        return Paths.get("target/logs/", REGISTRY_STORAGE.name(), testInfo.getTestClass().map(Class::getName).orElse(""),
+                testInfo.getDisplayName());
+    }
+
 }
