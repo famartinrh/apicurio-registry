@@ -83,7 +83,7 @@ public class LoadTest extends BaseIT {
         }, runnable -> new Thread(runnable).start());
 
         try {
-            List<CompletionStage<Void>> createResults = IntStream.range(0, 1000).mapToObj(i -> {
+            List<CompletionStage<Void>> createResults = IntStream.range(0, 250).mapToObj(i -> {
                 return createArtifactAsync(apicurioService, i)
                         .thenAccept(m ->
                             artifactsQueue.offer(m.getId())
