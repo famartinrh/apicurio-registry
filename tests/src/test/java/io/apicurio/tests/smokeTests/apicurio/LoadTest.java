@@ -101,7 +101,7 @@ public class LoadTest extends BaseIT {
         }
 
         try {
-            Throwable result = deleteingResult.get(60, TimeUnit.SECONDS);
+            Throwable result = deleteingResult.get(120, TimeUnit.SECONDS);
             if (result != null) {
                 deleteLoopFlag.set(false);
                 throw new IllegalStateException("Error deleteing artifacts", result);
