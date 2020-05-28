@@ -210,7 +210,7 @@ public class SchemasConfluentIT extends ConfluentBaseIT {
         });
 
         List<RuleType> rules = service.listArtifactRules(subjectName);
-        assertThat(1, is(rules.size()));
+        assertThat(0, is(rules.size()));
 
         confluentService.deleteSubject(subjectName);
 
