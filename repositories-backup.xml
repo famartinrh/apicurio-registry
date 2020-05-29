@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <profiles>
+    <profile>
+      <repositories>
+        <repository>
+          <id>confluent</id>
+          <name>Confluent</name>
+          <url>https://packages.confluent.io/maven/</url>
+        </repository>
+        <repository>
+          <id>jitpack.io</id>
+          <name>jitpack.io</name>
+          <url>https://jitpack.io</url>
+        </repository>
+      </repositories>
+      <id>external_repos</id>
+    </profile>
+    <profile>
+      <repositories>
+        <repository>
+          <id>OSSRH</id>
+          <name>OSS Sonatype</name>
+          <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+      </repositories>
+      <id>removed-by-pme</id>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>removed-by-pme</activeProfile>
+    <activeProfile>external_repos</activeProfile>
+  </activeProfiles>
+</settings>
