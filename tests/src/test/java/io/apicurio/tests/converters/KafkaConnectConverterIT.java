@@ -215,7 +215,7 @@ public class KafkaConnectConverterIT extends BaseIT {
                 .forPort(8083)
                 .forStatusCode(200)
                 .withReadTimeout(Duration.ofSeconds(3))
-                .withStartupTimeout(Duration.ofSeconds(120)));
+                .withStartupTimeout(Duration.ofSeconds(300)));
         debeziumContainer.start();
 
     }
