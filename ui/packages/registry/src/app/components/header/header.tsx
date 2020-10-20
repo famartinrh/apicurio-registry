@@ -17,8 +17,8 @@
 
 import React from 'react';
 import "./header.css"
-import {Brand, PageHeader, Toolbar, ToolbarGroup, ToolbarItem} from '@patternfly/react-core';
-import brandImg from '../../../../assets/images/apicurio_logo_darkbkg_350px.png';
+import {Brand, Flex, FlexItem, PageHeader, Toolbar, ToolbarGroup, ToolbarItem} from '@patternfly/react-core';
+import brandImg from '../../../../assets/images/service-registry_logo_darkbkg.png';
 import {PureComponent, PureComponentProps, PureComponentState} from "../baseComponent";
 import {CogIcon} from "@patternfly/react-icons";
 import {Link} from "react-router-dom";
@@ -52,8 +52,16 @@ export class AppHeader extends PureComponent<AppHeaderProps, AppHeaderState> {
             </Toolbar>
         );
 
+        const logo: React.ReactElement = (
+            <div className="sr-logo pf-m-redhat-font" onClick={this.navigateTo("/artifacts")}>
+                <div className="sr-logo-img"><Brand src={brandImg} alt="Apicurio Registry"/></div>
+                <div className="sr-logo-text">|</div>
+                <div className="sr-logo-text">Service Registry</div>
+            </div>
+        );
+
         return (<PageHeader
-            logo={<Brand onClick={this.navigateTo("/artifacts")} src={brandImg} alt="Apicurio Registry"/>}
+            logo={logo}
             showNavToggle={false}
             toolbar={pageToolbar}
         />);

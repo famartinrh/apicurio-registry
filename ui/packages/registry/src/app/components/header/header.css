@@ -5,3 +5,21 @@
 .header-toolbar .header-icon:hover {
     color: #ccc;
 }
+
+div.sr-logo {
+}
+
+div.sr-logo > div {
+    display: inline;
+    float: left;
+}
+
+div.sr-logo > div.sr-logo-img {
+}
+
+div.sr-logo > div.sr-logo-text {
+    color: white;
+    margin-left: 25px;
+    line-height: 61px;
+    font-size: 22px;
+}
