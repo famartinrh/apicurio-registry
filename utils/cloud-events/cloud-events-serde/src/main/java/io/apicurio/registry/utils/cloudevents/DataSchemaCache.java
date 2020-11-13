@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import io.apicurio.registry.client.RegistryRestClient;
-import io.cloudevents.CloudEvent;
 
 /**
  * @author Fabian Martinez
@@ -40,7 +39,7 @@ public abstract class DataSchemaCache<T> {
     protected abstract T toSchema(InputStream response);
 
     //TODO investigate to do this with only one request to registry api
-    public DataSchemaEntry<T> getSchema(CloudEvent cloudEvent) {
+    public DataSchemaEntry<T> getSchema(CloudEventAttributes cloudEvent) {
         Long globalId = lookupGlobalId(cloudEvent);
         return schemas.computeIfAbsent(globalId, key -> {
             InputStream artifactResponse;
@@ -67,20 +66,17 @@ public abstract class DataSchemaCache<T> {
         schemas.clear();
     }
 
-    private Long lookupGlobalId(CloudEvent event) {
-        if (event.getDataSchema() != null) {
-            return globalIdsCache.computeIfAbsent(event.getDataSchema().toString(), key -> getGlobalIdByDataSchema(key));
+    private Long lookupGlobalId(CloudEventAttributes event) {
+        if (event.dataschema() != null) {
+            return globalIdsCache.computeIfAbsent(event.dataschema(), key -> getGlobalIdByDataSchema(key));
         } else {
-            String artifactId = event.getType();
+            String artifactId = event.type();
             return globalIdsCache.computeIfAbsent(artifactId, key -> client.getArtifactMetaData(artifactId).getGlobalId());
         }
     }
 
     private Long getGlobalIdByDataSchema(String dataschema) {
-        if (dataschema.startsWith("/schemagroups")) {
-            //TODO
-            // /schemagroups/{group-id}/schemas/{schema-id}/versions/{version-number}
-        } else if (dataschema.startsWith("/apicurio")) {
+        if (dataschema.startsWith("/apicurio")) {
             String[] apicurioArtifactTokens = Stream.of(dataschema.split("/"))
                 .filter(s -> s != null && !s.isEmpty())
                 .collect(Collectors.toList()).toArray(new String[0]);
