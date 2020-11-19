@@ -946,7 +946,7 @@ public abstract class AbstractSqlRegistryStorage extends AbstractRegistryStorage
         try {
             return this.jdbi.withHandle( handle -> {
                 String sql = sqlStatements.selectArtifactRules();
-                return handle.createQuery(sql)
+                List<RuleType> rules = handle.createQuery(sql)
                         .bind(0, artifactId)
                         .map(new RowMapper<RuleType>() {
                             @Override
@@ -955,6 +955,17 @@ public abstract class AbstractSqlRegistryStorage extends AbstractRegistryStorage
                             }
                         })
                         .list();
+                if (rules.size() == 0) {
+                    sql = sqlStatements.countArtifact();
+                    Integer count = handle.createQuery(sql)
+                            .bind(0, artifactId)
+                            .mapTo(Integer.class)
+                            .one();
+                    if (count.intValue() == 0) {
+                        throw new ArtifactNotFoundException(artifactId);
+                    }
+                }
+                return rules;
             });
         } catch (Exception e) {
             throw new RegistryStorageException(e);
@@ -970,14 +981,14 @@ public abstract class AbstractSqlRegistryStorage extends AbstractRegistryStorage
             throws ArtifactNotFoundException, RuleAlreadyExistsException, RegistryStorageException {
         log.debug("Inserting an artifact rule row for artifact: {} rule: {}", artifactId, rule.name());
         try {
-            this.jdbi.withHandle( handle -> {
+            return this.jdbi.withHandle( handle -> {
                 String sql = sqlStatements.insertArtifactRule();
                 handle.createUpdate(sql)
                       .bind(0, artifactId)
                       .bind(1, rule.name())
                       .bind(2, config.getConfiguration())
                       .execute();
-                return null;
+                return CompletableFuture.completedFuture(null);
             });
         } catch (Exception e) {
             if (sqlStatements.isPrimaryKeyViolation(e)) {
@@ -988,7 +999,6 @@ public abstract class AbstractSqlRegistryStorage extends AbstractRegistryStorage
             }
             throw new RegistryStorageException(e);
         }
-        return CompletableFuture.completedFuture(null);
     }
 
     /**

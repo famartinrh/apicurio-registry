@@ -430,4 +430,14 @@ public abstract class CommonSqlStatements implements SqlStatements {
     public String selectAllArtifactVersionsCount() {
         return "SELECT COUNT(v.globalId) FROM versions v JOIN artifacts a ON a.artifactId = v.artifactId WHERE a.artifactId = ?";
     }
+
+    /**
+     * @see io.apicurio.registry.storage.impl.sql.SqlStatements#countArtifact()
+     */
+    @Override
+    public String countArtifact() {
+        return "SELECT COUNT(a.artifactId) FROM artifacts a WHERE a.artifactId = ?";
+    }
+
+
 }

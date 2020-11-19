@@ -283,4 +283,10 @@ public interface SqlStatements {
      */
     public String insertProperty();
 
+    /**
+     * A statement to count the number of rows in "artifacts" table that matches an artifactId
+     * @return
+     */
+    public String countArtifact();
+
 }
