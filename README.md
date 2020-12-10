@@ -224,3 +224,14 @@ get stored in various modules' `target` directories.  These are then recognized 
 but are sometimes deleted during the Eclipse "clean" phase.  To prevent Eclipse from
 over-cleaning these files, find the **os-maven-plugin-1.6.2.jar** JAR in your 
 `.m2/repository` directory and copy it into `$ECLIPSE_HOME/dropins`.
+
+## Build native image
+
+For now building native image for SQL and kafkasql storages is not working because of issues with JDBI.
+In order to fix the issues with JDBI looks like a substitution is needed for class `org.jdbi.v3.core.config.ConfigRegistry`
+
+Commands to build native image
+```
+mvn clean install -am -Pprod -Psql -pl storage/sql -DskipTests
+mvn package -Pnative -Dquarkus.native.container-build=true -Pprod -Psql -pl storage/sql -DskipTests
+```
