@@ -523,6 +523,7 @@ public abstract class AbstractSqlRegistryStorage extends AbstractRegistryStorage
     protected CompletionStage<ArtifactMetaDataDto> createArtifactWithMetadata(String artifactId,
             ArtifactType artifactType, long contentId, String createdBy,
             Date createdOn, EditableArtifactMetaDataDto metaData, GlobalIdGenerator globalIdGenerator) {
+        log.debug("Creating artifact for tenant {}", tenantContext.tenantId());
         log.debug("Inserting an artifact row for: {}", artifactId);
         try {
             return this.jdbi.withHandle( handle -> {
@@ -747,6 +748,7 @@ public abstract class AbstractSqlRegistryStorage extends AbstractRegistryStorage
      */
     @Override @Transactional
     public Set<String> getArtifactIds(Integer limit) {
+        log.debug("Listing artifacts for tenant {}", tenantContext.tenantId());
         log.debug("Getting the set of all artifact IDs");
         return withHandle( handle -> {
             String sql = sqlStatements.selectArtifactIds();

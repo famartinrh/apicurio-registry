@@ -16,12 +16,13 @@
 
 package io.apicurio.registry.mt;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-@RequestScoped
+//@RequestScoped
+@SessionScoped
 public class TenantContextImpl implements TenantContext {
 
     protected static final String DEFAULT_TENANT_ID = "_";

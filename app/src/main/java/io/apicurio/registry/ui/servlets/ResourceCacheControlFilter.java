@@ -19,6 +19,7 @@ package io.apicurio.registry.ui.servlets;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author eric.wittmann@gmail.com
  */
+@ApplicationScoped
 public class ResourceCacheControlFilter implements Filter {
 
     public static void disableHttpCaching(HttpServletResponse httpResponse) {
@@ -46,7 +48,7 @@ public class ResourceCacheControlFilter implements Filter {
     private static long expiredSinceYesterday(Date now) {
         return now.getTime() - 86400000L;
     }
-    
+
     /**
      * C'tor
      */
@@ -71,7 +73,7 @@ public class ResourceCacheControlFilter implements Filter {
         httpResponse.setDateHeader("Date", now.getTime()); //$NON-NLS-1$
 
         // Don't cache non-file paths.  Also don't cache version.js or config.js files - those are dynamically generated.
-        if (requestURI == null || !requestURI.contains(".") || requestURI.contains("version.js") || 
+        if (requestURI == null || !requestURI.contains(".") || requestURI.contains("version.js") ||
                 requestURI.contains("config.js")) {
             disableHttpCaching(httpResponse);
         } else {

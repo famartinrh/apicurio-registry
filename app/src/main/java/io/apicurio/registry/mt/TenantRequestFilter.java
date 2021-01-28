@@ -55,7 +55,8 @@ public class TenantRequestFilter {
         multitenancyBasePath = "/" + nameMultitenancyBasePath + "/";
     }
 
-    @RouteFilter(value = RouteFilter.DEFAULT_PRIORITY + 1000)
+    @RouteFilter(value = Integer.MAX_VALUE)
+//    @ActivateRequestContext
     public void tenantRedirectFilter(RoutingContext ctx) throws IOException {
 
         if (multitenancyEnabled) {
