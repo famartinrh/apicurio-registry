@@ -10,29 +10,6 @@
         }
     },
     "paths": {
-        "/registry": {
-            "summary": "Path used to access the information of the registry deployment being managed",
-            "description": "This path only contains a `GET` operation to obtain the details of the registry deployment that this tenant manager API is managing",
-            "get": {
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RegistryDeploymentInfo"
-                                }
-                            }
-                        },
-                        "description": "Basic information about the Registry deployment being managed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/ServerError"
-                    }
-                },
-                "operationId": "getRegistryInfo",
-                "summary": "Returns the details of the registry deployment being managed"
-            }
-        },
         "/tenants": {
             "summary": "Path used to manage the list of tenants.",
             "description": "The REST endpoint/path used to list and create zero or more `Tenant` entities.  This path contains a `GET` and `POST` operation to perform the list and create tasks, respectively.",
@@ -147,16 +124,34 @@
                     "required": true
                 }
             ]
-        }
+        },
+        "/registry": {
+            "summary": "Path used to access the information of the registry deployment being managed",
+            "description": "This path only contains a `GET` operation to obtain the details of the registry deployment that this tenant manager API is managing",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RegistryDeploymentInfo"
+                                }
+                            }
+                        },
+                        "description": "Basic information about the Registry deployment being managed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                },
+                "operationId": "getRegistryInfo",
+                "summary": "Returns the details of the registry deployment being managed"
+            }
+        },
+        "x-codegen-contextRoot": "/api/v1"
     },
     "components": {
         "schemas": {
-            "TenantId": {
-                "title": "Root Type for TenantId",
-                "description": "The unique ID of a tenant managed by this API, bound to only one registry deployment.",
-                "type": "string",
-                "example": "\"12345\""
-            },
             "Error": {
                 "title": "Root Type for Error",
                 "description": "All error responses, whether `4xx` or `5xx` will include one of these as the response\nbody.",
@@ -184,7 +179,7 @@
                     "error_code": 500,
                     "message": "An error occurred somewhere."
                 },
-                "x-codegen-package": "io.apicurio.multitenant.rest.datamodel"
+                "x-codegen-package": "io.apicurio.multitenant.api.datamodel"
             },
             "NewRegistryTenantRequest": {
                 "title": "Root Type for NewTenant",
@@ -196,8 +191,8 @@
                 "type": "object",
                 "properties": {
                     "tenantId": {
-                        "$ref": "#/components/schemas/TenantId",
-                        "description": "Unique identifier of a tenant within a registry deployment"
+                        "description": "Unique identifier of a tenant within a registry deployment",
+                        "type": "string"
                     },
                     "organizationId": {
                         "description": "ID of the organization the tenant belongs to",
@@ -216,7 +211,7 @@
                     "organizationId": "bank-of-foo",
                     "deploymentFlavor": "SMALL"
                 },
-                "x-codegen-package": "io.apicurio.multitenant.rest.datamodel"
+                "x-codegen-package": "io.apicurio.multitenant.api.datamodel"
             },
             "RegistryDeploymentInfo": {
                 "title": "Root Type for RegistryDeployment",
@@ -234,7 +229,7 @@
                     "name": "registry-abc",
                     "url": "https://registry.apps.com"
                 },
-                "x-codegen-package": "io.apicurio.multitenant.rest.datamodel"
+                "x-codegen-package": "io.apicurio.multitenant.api.datamodel"
             },
             "RegistryTenant": {
                 "title": "Root Type for Tenant",
@@ -249,8 +244,8 @@
                 "type": "object",
                 "properties": {
                     "tenantId": {
-                        "$ref": "#/components/schemas/TenantId",
-                        "description": "Unique identifier of a tenant within a registry deployment"
+                        "description": "Unique identifier of a tenant within a registry deployment",
+                        "type": "string"
                     },
                     "createdOn": {
                         "format": "date-time",
@@ -279,7 +274,7 @@
                     "createdBy": "usernamefoo",
                     "organizationId": "bank-of-foo"
                 },
-                "x-codegen-package": "io.apicurio.multitenant.rest.datamodel"
+                "x-codegen-package": "io.apicurio.multitenant.api.datamodel"
             }
         },
         "responses": {
