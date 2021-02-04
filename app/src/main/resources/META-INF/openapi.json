@@ -350,7 +350,8 @@
                     "required": true
                 }
             ]
-        }
+        },
+        "x-codegen-contextRoot": "/cncf/v0.1"
     },
     "components": {
         "schemas": {
@@ -361,9 +362,6 @@
                         "type": "string"
                     }
                 }
-            },
-            "SchemaBytePayload": {
-                "type": "string"
             },
             "SchemaGroup": {
                 "type": "object",
@@ -386,12 +384,27 @@
                         "type": "string"
                     },
                     "groupProperties": {
-                        "type": "object",
+                        "$ref": "#/components/schemas/GroupProperties",
                         "additionalProperties": {
                             "type": "string"
-                        }
+                        },
+                        "x-codegen-inline": true,
+                        "x-codegen-type": "StringMap"
                     }
                 }
+            },
+            "GroupProperties": {
+                "description": "Set of properties for a schemagroup.",
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                },
+                "x-codegen-inline": true,
+                "x-codegen-type": "StringMap"
+            },
+            "SchemaBytePayload": {
+                "format": "byte",
+                "type": "string"
             }
         },
         "responses": {

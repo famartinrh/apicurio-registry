@@ -2,8 +2,10 @@
 package io.apicurio.registry.cncf.schemaregistry.beans;
 
 import java.util.Date;
+import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,8 +29,13 @@ public class SchemaGroup {
     private Date updatedtimeutc;
     @JsonProperty("format")
     private String format;
+    /**
+     * Set of properties for a schemagroup.
+     * 
+     */
     @JsonProperty("groupProperties")
-    private GroupProperties groupProperties;
+    @JsonPropertyDescription("Set of properties for a schemagroup.")
+    private Map<String, String> groupProperties;
 
     @JsonProperty("id")
     public String getId() {
@@ -80,13 +87,21 @@ public class SchemaGroup {
         this.format = format;
     }
 
+    /**
+     * Set of properties for a schemagroup.
+     * 
+     */
     @JsonProperty("groupProperties")
-    public GroupProperties getGroupProperties() {
+    public Map<String, String> getGroupProperties() {
         return groupProperties;
     }
 
+    /**
+     * Set of properties for a schemagroup.
+     * 
+     */
     @JsonProperty("groupProperties")
-    public void setGroupProperties(GroupProperties groupProperties) {
+    public void setGroupProperties(Map<String, String> groupProperties) {
         this.groupProperties = groupProperties;
     }
 

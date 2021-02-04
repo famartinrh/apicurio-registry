@@ -1,6 +1,7 @@
 package io.apicurio.registry.cncf.schemaregistry;
 
 import io.apicurio.registry.cncf.schemaregistry.beans.SchemaGroup;
+import io.apicurio.registry.cncf.schemaregistry.beans.SchemaId;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -14,7 +15,7 @@ import javax.ws.rs.Produces;
 /**
  * A JAX-RS interface.  An implementation of this interface must be provided.
  */
-@Path("/cncf/schemagroups")
+@Path("/cncf/v0.1/schemagroups")
 public interface SchemagroupsResource {
   /**
    * Get all schema groups in namespace.
@@ -66,7 +67,8 @@ public interface SchemagroupsResource {
    */
   @Path("/{group-id}/schemas/{schema-id}")
   @GET
-  void getLatestSchema(@PathParam("group-id") String groupId,
+  @Produces("application/json;format=avro")
+  String getLatestSchema(@PathParam("group-id") String groupId,
       @PathParam("schema-id") String schemaId);
 
   /**
@@ -75,9 +77,10 @@ public interface SchemagroupsResource {
    */
   @Path("/{group-id}/schemas/{schema-id}")
   @POST
+  @Produces({"application/json;format=avro", "application/json;format=protobuf"})
   @Consumes("application/json;format=avro")
-  void createSchema(@PathParam("group-id") String groupId, @PathParam("schema-id") String schemaId,
-      String data);
+  SchemaId createSchema(@PathParam("group-id") String groupId,
+      @PathParam("schema-id") String schemaId, String data);
 
   @Path("/{group-id}/schemas/{schema-id}")
   @DELETE
@@ -94,7 +97,8 @@ public interface SchemagroupsResource {
 
   @Path("/{group-id}/schemas/{schema-id}/versions/{version-number}")
   @GET
-  void getSchemaVersion(@PathParam("group-id") String groupId,
+  @Produces("application/json;format=avro")
+  String getSchemaVersion(@PathParam("group-id") String groupId,
       @PathParam("schema-id") String schemaId, @PathParam("version-number") Integer versionNumber);
 
   @Path("/{group-id}/schemas/{schema-id}/versions/{version-number}")
