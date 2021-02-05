@@ -4,6 +4,7 @@ import io.apicurio.registry.cncf.schemaregistry.beans.SchemaGroup;
 import io.apicurio.registry.cncf.schemaregistry.beans.SchemaId;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.CompletionStage;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -65,30 +66,6 @@ public interface SchemagroupsResource {
   void deleteSchemasByGroup(@PathParam("group-id") String groupId);
 
   /**
-   * Get latest version of schema.
-   */
-  @Path("/{group-id}/schemas/{schema-id}")
-  @GET
-  @Produces("application/json;format=avro")
-  Response getLatestSchema(@PathParam("group-id") String groupId,
-      @PathParam("schema-id") String schemaId);
-
-  /**
-   * Register schema. If schema of specified name does not exist in specified group, schema is created at version 1. If schema of specified name exists already in specified group, schema is created at latest version + 1. If schema with identical content already exists, existing schema's ID is returned. 
-   *
-   */
-  @Path("/{group-id}/schemas/{schema-id}")
-  @POST
-  @Produces({"application/json;format=avro", "application/json;format=protobuf"})
-  @Consumes("application/json;format=avro")
-  SchemaId createSchema(@PathParam("group-id") String groupId,
-      @PathParam("schema-id") String schemaId, InputStream data);
-
-  @Path("/{group-id}/schemas/{schema-id}")
-  @DELETE
-  void deleteSchema(@PathParam("group-id") String groupId, @PathParam("schema-id") String schemaId);
-
-  /**
    * Get list of versions for specified schema
    */
   @Path("/{group-id}/schemas/{schema-id}/versions")
@@ -107,4 +84,28 @@ public interface SchemagroupsResource {
   @DELETE
   void deleteSchemaVersion(@PathParam("group-id") String groupId,
       @PathParam("schema-id") String schemaId, @PathParam("version-number") Integer versionNumber);
+
+  /**
+   * Get latest version of schema.
+   */
+  @Path("/{group-id}/schemas/{schema-id}")
+  @GET
+  @Produces("application/json;format=avro")
+  Response getLatestSchema(@PathParam("group-id") String groupId,
+      @PathParam("schema-id") String schemaId);
+
+  /**
+   * Register schema. If schema of specified name does not exist in specified group, schema is created at version 1. If schema of specified name exists already in specified group, schema is created at latest version + 1. If schema with identical content already exists, existing schema's ID is returned. 
+   *
+   */
+  @Path("/{group-id}/schemas/{schema-id}")
+  @POST
+  @Produces({"application/json;format=avro", "application/json;format=protobuf"})
+  @Consumes("application/json;format=avro")
+  CompletionStage<SchemaId> createSchema(@PathParam("group-id") String groupId,
+      @PathParam("schema-id") String schemaId, InputStream data);
+
+  @Path("/{group-id}/schemas/{schema-id}")
+  @DELETE
+  void deleteSchema(@PathParam("group-id") String groupId, @PathParam("schema-id") String schemaId);
 }
