@@ -177,6 +177,14 @@ public class StreamsRegistryStorage extends AbstractRegistryStorage {
     @Inject
     SecurityIdentity securityIdentity;
 
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#storageName()
+     */
+    @Override
+    public String storageName() {
+        return "streams";
+    }
+
     private final Submitter<RecordMetadata> submitter = new Submitter<>(this::send);
 
     private CompletableFuture<RecordMetadata> send(Str.StorageValue value) {
@@ -1227,6 +1235,14 @@ public class StreamsRegistryStorage extends AbstractRegistryStorage {
                 .map(kv -> getArtifactMetaDataOrNull(kv.key.getGroupId(), kv.key.getArtifactId()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#supportsMultiTenancy()
+     */
+    @Override
+    public boolean supportsMultiTenancy() {
+        return false;
     }
 
     @AllArgsConstructor

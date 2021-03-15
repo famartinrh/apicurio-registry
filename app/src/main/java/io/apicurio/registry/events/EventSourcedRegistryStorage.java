@@ -73,6 +73,22 @@ public class EventSourcedRegistryStorage implements RegistryStorage {
         }
     }
 
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#storageName()
+     */
+    @Override
+    public String storageName() {
+        return storage.storageName();
+    }
+
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#supportsMultiTenancy()
+     */
+    @Override
+    public boolean supportsMultiTenancy() {
+        return storage.supportsMultiTenancy();
+    }
+
     @Override
     public boolean isReady() {
         return storage.isReady();

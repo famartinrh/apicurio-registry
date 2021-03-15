@@ -89,6 +89,14 @@ public class AsyncInMemoryRegistryStorage extends SimpleMapRegistryStorage {
 
     private ExecutorService executor = Executors.newCachedThreadPool();
 
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#storageName()
+     */
+    @Override
+    public String storageName() {
+        return "async-mem";
+    }
+
     @Override
     protected long nextGlobalId() {
         return globalCounter.getAndIncrement();

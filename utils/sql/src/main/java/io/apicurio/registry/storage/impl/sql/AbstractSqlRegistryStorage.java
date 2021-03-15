@@ -155,6 +155,22 @@ public abstract class AbstractSqlRegistryStorage extends AbstractRegistryStorage
         }
     }
 
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#storageName()
+     */
+    @Override
+    public String storageName() {
+        return "sql";
+    }
+
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#supportsMultiTenancy()
+     */
+    @Override
+    public boolean supportsMultiTenancy() {
+        return true;
+    }
+
     @PostConstruct
     @Transactional
     protected void initialize() {

@@ -23,6 +23,7 @@ import java.util.SortedSet;
 import java.util.concurrent.CompletionStage;
 
 import io.apicurio.registry.content.ContentHandle;
+import io.apicurio.registry.mt.TenantContext;
 import io.apicurio.registry.mt.metadata.TenantMetadataDto;
 import io.apicurio.registry.storage.dto.ArtifactMetaDataDto;
 import io.apicurio.registry.storage.dto.ArtifactSearchResultsDto;
@@ -48,6 +49,11 @@ import io.apicurio.registry.utils.ConcurrentUtil;
  * @author Ales Justin
  */
 public interface RegistryStorage {
+
+    /**
+     * The storage name
+     */
+    public String storageName();
 
     /**
      * Is the artifactStore ready?
@@ -481,6 +487,13 @@ public interface RegistryStorage {
      * @throws RegistryStorageException
      */
     public TenantMetadataDto getTenantMetadata(String tenantId) throws RegistryStorageException;
+
+    /**
+     * Returns true if the storage implementation supports multitenancy.
+     * If the storage supports multitenancy, it will get the tenant information from the {@link TenantContext}
+     * @return if multitenancy is supported
+     */
+    public boolean supportsMultiTenancy();
 
     /**
      * Returns the log configuration persisted in the storage for the given logger

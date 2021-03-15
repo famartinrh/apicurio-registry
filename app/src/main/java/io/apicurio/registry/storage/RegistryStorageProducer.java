@@ -35,7 +35,7 @@ import javax.inject.Inject;
  */
 @ApplicationScoped
 public class RegistryStorageProducer {
-    private static Logger log = LoggerFactory.getLogger(RegistryStorageProducer.class);
+    private static final Logger log = LoggerFactory.getLogger(RegistryStorageProducer.class);
 
     @Inject
     Instance<RegistryStorage> storages;
@@ -52,7 +52,7 @@ public class RegistryStorageProducer {
     public RegistryStorage realImpl() {
 
         RegistryStorage impl = null;
-        
+
         if (provider.isResolvable()) {
             impl= provider.get().storage();
         } else {
@@ -60,6 +60,7 @@ public class RegistryStorageProducer {
             if (list.size() == 1) {
                 impl = list.get(0);
             } else {
+                log.debug("Available storage impls {}", list.toString());
                 for (RegistryStorage rs : list) {
                     if (rs instanceof InMemoryRegistryStorage == false) {
                         impl = rs;
@@ -77,7 +78,7 @@ public class RegistryStorageProducer {
                 return impl;
             }
         }
-        
+
         throw new IllegalStateException("No RegistryStorage available on the classpath!");
     }
 }

@@ -169,6 +169,22 @@ public class KafkaSqlRegistryStorage extends AbstractRegistryStorage {
     }
 
     /**
+     * @see io.apicurio.registry.storage.RegistryStorage#storageName()
+     */
+    @Override
+    public String storageName() {
+        return "kafkasql";
+    }
+
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#supportsMultiTenancy()
+     */
+    @Override
+    public boolean supportsMultiTenancy() {
+        return true;
+    }
+
+    /**
      * @see io.apicurio.registry.storage.impl.AbstractRegistryStorage#isReady()
      */
     @Override

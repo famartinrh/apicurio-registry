@@ -82,6 +82,14 @@ public class InfinispanRegistryStorage extends AbstractMapRegistryStorage implem
 
     private Map<String, Long> counter;
 
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#storageName()
+     */
+    @Override
+    public String storageName() {
+        return "infinispan";
+    }
+
     @Override
     protected void afterInit() {
         manager.defineConfiguration(
@@ -92,6 +100,14 @@ public class InfinispanRegistryStorage extends AbstractMapRegistryStorage implem
         );
 
         counter = manager.getCache(COUNTER_CACHE, true);
+    }
+
+    /**
+     * @see io.apicurio.registry.storage.RegistryStorage#supportsMultiTenancy()
+     */
+    @Override
+    public boolean supportsMultiTenancy() {
+        return false;
     }
 
     @Override

@@ -64,8 +64,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -85,6 +83,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import static io.apicurio.registry.utils.StringUtil.isEmpty;
 
 /**
@@ -99,7 +100,10 @@ public abstract class AbstractMapRegistryStorage extends AbstractRegistryStorage
 
     private static final int ARTIFACT_FIRST_VERSION = 1;
 
+    @Inject
     protected ArtifactTypeUtilProviderFactory factory;
+
+    @Inject
     protected SecurityIdentity securityIdentity;
 
     protected StorageMap storage;
@@ -113,9 +117,11 @@ public abstract class AbstractMapRegistryStorage extends AbstractRegistryStorage
     protected Map<String, String> logConfigurations;
     protected Map<String, GroupMetaDataDto> groups;
 
-    @Inject
-    public AbstractMapRegistryStorage(ArtifactTypeUtilProviderFactory factory, SecurityIdentity securityIdentity) {
+    public void setArtifactTypeProviderFactory(ArtifactTypeUtilProviderFactory factory) {
         this.factory = factory;
+    }
+
+    public void setSecurityIdentity(SecurityIdentity securityIdentity) {
         this.securityIdentity = securityIdentity;
     }
 

@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Inject;
-
 import org.jetbrains.annotations.NotNull;
 
 import io.apicurio.registry.storage.ArtifactNotFoundException;
@@ -14,8 +12,6 @@ import io.apicurio.registry.storage.ArtifactStateExt;
 import io.apicurio.registry.storage.VersionNotFoundException;
 import io.apicurio.registry.storage.dto.GroupMetaDataDto;
 import io.apicurio.registry.types.ArtifactState;
-import io.apicurio.registry.types.provider.ArtifactTypeUtilProviderFactory;
-import io.quarkus.security.identity.SecurityIdentity;
 
 /**
  * @author Ales Justin
@@ -23,13 +19,11 @@ import io.quarkus.security.identity.SecurityIdentity;
 public abstract class SimpleMapRegistryStorage extends AbstractMapRegistryStorage {
 
     /**
-     * Constructor.
-     * @param factory
-     * @param securityIdentity
+     * @see io.apicurio.registry.storage.RegistryStorage#supportsMultiTenancy()
      */
-    @Inject
-    public SimpleMapRegistryStorage(ArtifactTypeUtilProviderFactory factory, SecurityIdentity securityIdentity) {
-        super(factory, securityIdentity);
+    @Override
+    public boolean supportsMultiTenancy() {
+        return false;
     }
 
     @Override
