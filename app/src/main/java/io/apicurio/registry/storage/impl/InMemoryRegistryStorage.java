@@ -19,11 +19,16 @@ package io.apicurio.registry.storage.impl;
 import io.apicurio.registry.logging.Logged;
 import io.apicurio.registry.metrics.PersistenceExceptionLivenessApply;
 import io.apicurio.registry.metrics.PersistenceTimeoutReadinessApply;
+import io.apicurio.registry.types.provider.ArtifactTypeUtilProviderFactory;
+import io.quarkus.security.identity.SecurityIdentity;
+
 import org.eclipse.microprofile.metrics.annotation.ConcurrentGauge;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.apicurio.registry.metrics.MetricIDs.*;
@@ -41,14 +46,24 @@ import static org.eclipse.microprofile.metrics.MetricUnits.MILLISECONDS;
 @Logged
 public class InMemoryRegistryStorage extends SimpleMapRegistryStorage {
 
+    /**
+     * Constructor.
+     * @param factory
+     * @param securityIdentity
+     */
+    @Inject
+    public InMemoryRegistryStorage(ArtifactTypeUtilProviderFactory factory, SecurityIdentity securityIdentity) {
+        super(factory, securityIdentity);
+    }
+
     private AtomicLong globalIdCounter = new AtomicLong(1);
     private AtomicLong contentIdCounter = new AtomicLong(1);
-    
+
     @Override
     protected long nextGlobalId() {
         return globalIdCounter.getAndIncrement();
     }
-    
+
     @Override
     protected long nextContentId() {
         return contentIdCounter.getAndIncrement();

@@ -99,10 +99,7 @@ public abstract class AbstractMapRegistryStorage extends AbstractRegistryStorage
 
     private static final int ARTIFACT_FIRST_VERSION = 1;
 
-    @Inject
     protected ArtifactTypeUtilProviderFactory factory;
-
-    @Inject
     protected SecurityIdentity securityIdentity;
 
     protected StorageMap storage;
@@ -115,6 +112,12 @@ public abstract class AbstractMapRegistryStorage extends AbstractRegistryStorage
     protected Map<String, String> globalRules;
     protected Map<String, String> logConfigurations;
     protected Map<String, GroupMetaDataDto> groups;
+
+    @Inject
+    public AbstractMapRegistryStorage(ArtifactTypeUtilProviderFactory factory, SecurityIdentity securityIdentity) {
+        this.factory = factory;
+        this.securityIdentity = securityIdentity;
+    }
 
     protected void beforeInit() {
     }
